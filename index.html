@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="A&M & Smart 8">
+    <meta name="theme-color" content="#1e293b">
+    <title>نظام الإدارة والحضور | A&M Store & Smart 8</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #0ea5e9;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+        }
+        body.dark {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --border: #334155;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 90px;
+            padding-top: env(safe-area-inset-top);
+            transition: background 0.2s, color 0.2s;
+        }
+        header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #fff;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .header-title p {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .icon-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--muted);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 13px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .btn-outline:hover {
+            background: rgba(37,99,235,0.08);
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 50;
+        }
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 14px 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: color 0.2s;
+        }
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 700;
+            border-top: 3px solid var(--primary);
+        }
+        .banner {
+            position: fixed;
+            top: 75px;
+            left: 16px;
+            right: 16px;
+            max-width: 618px;
+            margin: 0 auto;
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-15px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .stat-box h3 {
+            font-size: 24px;
+            color: var(--primary);
+        }
+        .stat-box p {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        .record-item {
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+        }
+        .record-item:last-child {
+            border-bottom: none;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(37,99,235,0.12);
+            color: var(--primary);
+        }
+        .badge.urgent {
+            background: rgba(220,38,38,0.12);
+            color: var(--danger);
+        }
+        .badge.done {
+            background: rgba(22,163,74,0.12);
+            color: var(--success);
+        }
+        .hidden {
+            display: none !important;
+        }
+        .row-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .small-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .account-bar {
+            background: rgba(37,99,235,0.08);
+            border: 1px solid rgba(37,99,235,0.25);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .account-info h4 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 14px;
+        }
+        .account-info p {
+            margin: 4px 0 0 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        .preview-box {
+            width: 100%;
+            height: 220px;
+            border-radius: 14px;
+            background: #0f172a;
+            border: 2px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .preview-placeholder {
+            color: #94a3b8;
+            font-size: 13px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">
+        <h1>A&amp;M Store &amp; Smart 8</h1>
+        <p id="subHeaderText">منظومة الربط السحابي (Firebase &amp; Sheets)</p>
+    </div>
+    <div class="header-actions">
+        <button class="icon-btn" onclick="toggleDark()">🌙</button>
+        <button class="icon-btn" id="adminBtn" onclick="handleAdminClick()">🔒 الإدارة</button>
+    </div>
+</header>
+
+<div id="banner" class="banner"></div>
+
+<div class="container">
+    
+    <!-- 1. شاشة تسجيل الدخول بالكود -->
+    <div id="loginView" class="card">
+        <div style="text-align:center; padding: 24px 8px;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🔐</div>
+            <h2 style="color:var(--primary); margin-bottom:8px;">تسجيل الدخول للنظام</h2>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">
+                أدخل كود الحساب المخصص لك للربط التلقائي باسمك وفرعك
+            </p>
+            <input type="password" id="loginAccessCode" placeholder="كود الحساب / الرقم السري" style="text-align:center; font-size:18px; letter-spacing:4px; max-width: 320px; margin: 0 auto 16px auto; display: block;">
+            <button class="btn" style="max-width: 320px; margin: 0 auto; display: block;" onclick="attemptLogin()">دخول وتثبيت الجلسة</button>
+        </div>
+    </div>
+
+    <!-- 2. واجهة العمليات للموظف -->
+    <div id="mainAppView" class="hidden">
+        
+        <!-- شريط الحساب المعتمد -->
+        <div class="account-bar">
+            <div class="account-info">
+                <h4 id="activeUserName">👤 الموظف: -</h4>
+                <p id="activeUserBranch">📍 الفرع المعتمد: -</p>
+            </div>
+            <button class="small-btn" style="background:var(--danger);color:#fff;" onclick="logout()">خروج</button>
+        </div>
+
+        <div id="employeeView">
+            <!-- تبويب تسجيل الحضور والانصراف -->
+            <div id="tabAttendance" class="card">
+                <div class="card-title">
+                    <span>📍 تسجيل حضور وانصراف</span>
+                    <span class="badge done">GPS &amp; Time Guard</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>نوع الحركة</label>
+                    <select id="attType">
+                        <option value="حضور">حضور</option>
+                        <option value="انصراف">انصراف</option>
+                    </select>
+                </div>
+
+                <!-- معاينة الكاميرا والختم -->
+                <div class="preview-box" id="previewContainer">
+                    <div class="preview-placeholder" id="previewPlaceholder">
+                        📷 لم يتم التقاط صورة بعد<br><small style="font-size:11px;">اضغط على الزر أدناه لفتح الكاميرا</small>
+                    </div>
+                    <img id="capturedImgTag" class="hidden" alt="صورة التحقق">
+                </div>
+
+                <div class="form-group">
+                    <label>التقاط صورة التحقق المباشرة (مع ختم الوقت والفرع)</label>
+                    <input type="file" id="attPhotoInput" accept="image/*" capture="user" onchange="processCapturedPhoto(event)">
+                </div>
+
+                <button class="btn btn-outline" type="button" onclick="captureLocation()">📡 تحديث الموقع الجغرافي (GPS)</button>
+                <p id="gpsStatus" style="font-size:12px; color:var(--muted); margin-bottom:14px; text-align: center;">يلزم تفعيل الـ GPS لتسجيل الحضور</p>
+
+                <button class="btn" id="btnSubmitAtt" onclick="submitAttendance()">تأكيد وتسجيل الحركة</button>
+            </div>
+
+            <!-- تبويب تسجيل النواقص والطلبات -->
+            <div id="tabShortages" class="card hidden">
+                <div class="card-title">
+                    <span>📦 تسجيل طلب نواقص / عميل</span>
+                </div>
+                <div class="form-group">
+                    <label>اسم العميل</label>
+                    <input type="text" id="shCustomerName" placeholder="اكتب اسم العميل">
+                </div>
+                <div class="form-group">
+                    <label>رقم موبايل العميل (واتساب)</label>
+                    <input type="tel" id="shCustomerPhone" placeholder="01xxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>التصنيف</label>
+                    <select id="shCategory">
+                        <option value="إكسسوارات">إكسسوارات</option>
+                        <option value="هواتف">هواتف</option>
+                        <option value="قطع غيار وصيانة">قطع غيار وصيانة</option>
+                        <option value="ساعات وسماعات">ساعات وسماعات</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>تفاصيل الصنف المطلوب</label>
+                    <textarea id="shItemDetails" placeholder="الموديل، اللون، المساحة بالتفصيل..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>درجة الأهمية والاستعجال</label>
+                    <select id="shUrgency">
+                        <option value="عادي">عادي</option>
+                        <option value="مهم">مهم</option>
+                        <option value="عاجل جداً - عميل ينتظر">عاجل جداً - عميل ينتظر</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>قيمة العربون المدفوع (ج.م)</label>
+                    <input type="number" id="shDeposit" value="0" min="0">
+                </div>
+                <button class="btn" id="btnSubmitSh" onclick="submitShortage()">حفظ في كشف النواقص السحابي</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. لوحة تحكم صاحب المكان (الإدارة) -->
+    <div id="adminView" class="hidden">
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3 id="statAttCount">0</h3>
+                <p>حركات الحضور المسجلة</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="statShCount">0</h3>
+                <p>إجمالي طلبات النواقص</p>
+            </div>
+        </div>
+        
+        <!-- صندوق إنذارات التلاعب بالتوقيت -->
+        <div class="card" style="border: 2px solid var(--danger); display:none;" id="securityAlertsContainer">
+            <div class="card-title" style="color: var(--danger);">
+                <span>🚨 إنذارات التلاعب بالتوقيت المكتشفة</span>
+            </div>
+            <div id="adminSecurityAlertsList"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span>🔍 فرز السجلات حسب الفرع</span>
+                <button class="small-btn" style="background:var(--primary);color:#fff;" onclick="loadAdminData()">🔄 تحديث لحظي</button>
+            </div>
+            <select id="adminBranchFilter" onchange="renderAdminLists()">
+                <option value="ALL">جميع الفروع</option>
+                <option value="A&M Store - فرع 1">A&amp;M Store - فرع 1</option>
+                <option value="A&M Store - فرع 2">A&amp;M Store - فرع 2</option>
+                <option value="Smart 8">Smart 8</option>
+            </select>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span>📦 كشف النواقص وطلبات العملاء</span>
+            </div>
+            <div id="adminShortagesList">جاري جلب السجلات...</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span>🕒 سجل حضور وانصراف الموظفين</span>
+            </div>
+            <div id="adminAttendanceList">جاري جلب السجلات...</div>
+        </div>
+    </div>
+</div>
+
+<!-- شريط التبويبات السفلي للموظف -->
+<nav class="bottom-nav hidden" id="employeeNav">
+    <button class="nav-item active" id="navAtt" onclick="switchTab(0)">📍 الحضور والانصراف</button>
+    <button class="nav-item" id="navSh" onclick="switchTab(1)">📦 كشف النواقص</button>
+</nav>
+
+<script>
+    // -------------------------------------------------------------
+    // روابط الاتصال والمزامنة (Firebase & Google Sheets Script)
+    // -------------------------------------------------------------
+    const FIREBASE_DB_URL = "https://amstoremanagement-f3e46-default-rtdb.firebaseio.com";
+    
+    // رابط Google Apps Script الخاص بك لمزامنة الشيت السحابي
+    const GOOGLE_SHEETS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyH_7E4m57W8M-G50pZ7fP1_4cK7W1qZ4V_placeholder/exec";
+    
+    const ADMIN_PIN = "2026";
+
+    let currentLat = 0.0;
+    let currentLng = 0.0;
+    let currentMapsUrl = "";
+    let stampedImageBase64 = null;
+    
+    let loggedInUser = null;
+    let serverTimeOffset = 0;
+    
+    let allAttendance = [];
+    let allShortages = [];
+    let allAlerts = [];
+    let refreshTimer = null;
+
+    // المزامنة اللحظية مع خوادم جوجل لحساب الوقت الحقيقي
+    window.onload = () => {
+        fetch(`${FIREBASE_DB_URL}/.info/serverTimeOffset.json`)
+            .then(res => res.json())
+            .then(offset => {
+                serverTimeOffset = offset || 0;
+            })
+            .catch(() => { serverTimeOffset = 0; });
+            
+        const saved = localStorage.getItem("store_active_user");
+        if(saved) {
+            loggedInUser = JSON.parse(saved);
+            activateUserSession();
+        }
+    };
+
+    function getTrueServerTime() {
+        return Date.now() + serverTimeOffset;
+    }
+
+    function showBanner(title, msg, isSuccess = true) {
+        const b = document.getElementById("banner");
+        b.style.background = isSuccess ? "var(--success)" : "var(--danger)";
+        b.innerHTML = `<strong>${title}</strong><br>${msg}`;
+        b.style.display = "block";
+        setTimeout(() => { b.style.display = "none"; }, 4200);
+    }
+
+    function toggleDark() { document.body.classList.toggle("dark"); }
+
+    function switchTab(idx) {
+        document.getElementById("tabAttendance").classList.toggle("hidden", idx !== 0);
+        document.getElementById("tabShortages").classList.toggle("hidden", idx !== 1);
+        document.getElementById("navAtt").classList.toggle("active", idx === 0);
+        document.getElementById("navSh").classList.toggle("active", idx === 1);
+    }
+
+    // تسجيل الدخول والتحقق من الحساب
+    async function attemptLogin() {
+        const code = document.getElementById("loginAccessCode").value.trim();
+        if(!code) return showBanner("خطأ", "يرجى كتابة كود الدخول", false);
+        
+        // التحقق من كود الإدارة الرئيسي
+        if(code === ADMIN_PIN) {
+            loggedInUser = {
+                id: "ADMIN_OWNER",
+                name: "صاحب المكان (الإدارة)",
+                branch: "جميع الفروع",
+                role: "ADMIN",
+                accessCode: code
+            };
+            localStorage.setItem("store_active_user", JSON.stringify(loggedInUser));
+            activateUserSession();
+            showBanner("مرحباً بك", "تم تسجيل الدخول بلوحة الإدارة لجميع الفروع", true);
+            return;
+        }
+        
+        // التحقق من أكواد الموظفين في Firebase
+        try {
+            const res = await fetch(`${FIREBASE_DB_URL}/employee_accounts.json`);
+            const accounts = await res.json();
+            let found = null;
+            
+            if(accounts) {
+                for(const k in accounts) {
+                    if(accounts[k].accessCode === code) {
+                        found = { id: k, ...accounts[k] };
+                        break;
+                    }
+                }
+            }
+            
+            if(found) {
+                loggedInUser = found;
+                localStorage.setItem("store_active_user", JSON.stringify(loggedInUser));
+                activateUserSession();
+                showBanner(`أهلاً ${found.name}`, `تم ربط حسابك بفرع: ${found.branch}`, true);
+            } else {
+                showBanner("كود غير صحيح", "تأكد من كود الحساب المسلم لك من الإدارة", false);
+            }
+        } catch(e) {
+            showBanner("خطأ اتصال", "تأكد من وجود اتصال نشط بالإنترنت", false);
+        }
+    }
+
+    function logout() {
+        loggedInUser = null;
+        localStorage.removeItem("store_active_user");
+        clearInterval(refreshTimer);
+        stampedImageBase64 = null;
+        
+        document.getElementById("loginView").classList.remove("hidden");
+        document.getElementById("mainAppView").classList.add("hidden");
+        document.getElementById("adminView").classList.add("hidden");
+        document.getElementById("employeeNav").classList.add("hidden");
+        document.getElementById("loginAccessCode").value = "";
+        document.getElementById("adminBtn").innerText = "🔒 الإدارة";
+    }
+
+    function activateUserSession() {
+        document.getElementById("loginView").classList.add("hidden");
+        
+        if(loggedInUser.role === "ADMIN") {
+            document.getElementById("mainAppView").classList.add("hidden");
+            document.getElementById("employeeNav").classList.add("hidden");
+            document.getElementById("adminView").classList.remove("hidden");
+            document.getElementById("adminBtn").innerText = "🚪 خروج";
+            document.getElementById("subHeaderText").innerText = "لوحة متابعة الإدارة المركزية";
+            loadAdminData();
+            refreshTimer = setInterval(loadAdminData, 6000);
+        } else {
+            document.getElementById("mainAppView").classList.remove("hidden");
+            document.getElementById("adminView").classList.add("hidden");
+            document.getElementById("employeeNav").classList.remove("hidden");
+            document.getElementById("adminBtn").classList.add("hidden");
+            document.getElementById("activeUserName").innerText = "👤 الموظف: " + loggedInUser.name;
+            document.getElementById("activeUserBranch").innerText = "📍 الفرع المعتمد: " + loggedInUser.branch;
+        }
+    }
+
+    function handleAdminClick() {
+        if (loggedInUser && loggedInUser.role === "ADMIN") {
+            logout();
+        } else {
+            logout();
+            document.getElementById("loginAccessCode").focus();
+        }
+    }
+
+    // جلب إحداثيات GPS المؤكدة
+    function captureLocation() {
+        const status = document.getElementById("gpsStatus");
+        if (!navigator.geolocation) {
+            status.innerText = "المتصفح لا يدعم خدمات الموقع الجغرافي"; 
+            return;
+        }
+        status.innerText = "جاري التقاط إحداثيات الموقع الفعلي (GPS)...";
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                currentLat = pos.coords.latitude;
+                currentLng = pos.coords.longitude;
+                currentMapsUrl = `https://maps.google.com/?q=${currentLat.toFixed(6)},${currentLng.toFixed(6)}`;
+                status.innerText = `✅ تم التقاط وتأكيد الموقع بنجاح (${currentLat.toFixed(4)}, ${currentLng.toFixed(4)})`;
+                status.style.color = "var(--success)";
+            },
+            () => {
+                status.innerText = "⚠️ تعذر جلب الموقع. يرجى تفعيل الـ GPS وإعطاء الإذن للمتصفح";
+                status.style.color = "var(--danger)";
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    }
+
+    // رسم ختم التوقيت والفرع على الصورة في الذاكرة (Watermark)
+    function processCapturedPhoto(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+
+                // رسم الصورة الأصلية
+                ctx.drawImage(img, 0, 0);
+
+                // رسم شريط سفلي نصف شفاف
+                const barHeight = Math.max(img.height * 0.16, 70);
+                ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+                ctx.fillRect(0, img.height - barHeight, img.width, barHeight);
+
+                // ختم البيانات
+                const trueTimeDate = new Date(getTrueServerTime()).toLocaleString("ar-EG");
+                const line1 = `${loggedInUser.name} - ${loggedInUser.branch}`;
+                const line2 = `${document.getElementById("attType").value} | ${trueTimeDate}`;
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = `bold ${Math.max(barHeight * 0.32, 22)}px sans-serif`;
+                ctx.fillText(line1, 24, img.height - (barHeight * 0.52));
+
+                ctx.fillStyle = "#38bdf8";
+                ctx.font = `${Math.max(barHeight * 0.26, 18)}px sans-serif`;
+                ctx.fillText(line2, 24, img.height - (barHeight * 0.16));
+
+                stampedImageBase64 = canvas.toDataURL("image/jpeg", 0.85);
+
+                // عرض المعاينة
+                const imgTag = document.getElementById("capturedImgTag");
+                imgTag.src = stampedImageBase64;
+                imgTag.classList.remove("hidden");
+                document.getElementById("previewPlaceholder").classList.add("hidden");
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // إرسال إنذار التلاعب إلى Firebase
+    async function reportTampering(reason, deviceTime) {
+        if(!loggedInUser) return;
+        const alertObj = {
+            employeeName: loggedInUser.name,
+            employeeCode: loggedInUser.accessCode,
+            branch: loggedInUser.branch,
+            reason: reason,
+            deviceTime: deviceTime,
+            serverTime: getTrueServerTime(),
+            timestamp: Date.now()
+        };
+        try {
+            await fetch(`${FIREBASE_DB_URL}/security_alerts.json`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(alertObj)
+            });
+        } catch(e) {}
+    }
+
+    // إرسال البيانات المزدوج (Firebase + Google Sheets)
+    async function submitAttendance() {
+        if(!loggedInUser) return;
+
+        // 1. فحص التلاعب بالتوقيت
+        const phoneTime = Date.now();
+        const serverTime = getTrueServerTime();
+        const diffMinutes = Math.abs(phoneTime - serverTime) / (1000 * 60);
+
+        if(diffMinutes >= 2) {
+            reportTampering(`فارق في ساعة الجهاز بمقدار ${Math.round(diffMinutes)} دقيقة`, phoneTime);
+            showBanner("إنذار أمني", "توقيت الجهاز غير مطابق للتوقيت الفعلي! تم إرسال تنبيه للإدارة ولن يتم التسجيل.", false);
+            return;
+        }
+
+        if(!currentMapsUrl) {
+            showBanner("الموقع إجباري", "يرجى الضغط على زر تحديد الموقع (GPS) أولاً", false);
+            return;
+        }
+
+        if(!stampedImageBase64) {
+            showBanner("الصورة مطلوبة", "يرجى التقاط صورة التحقق المباشرة بالكاميرا أولاً", false);
+            return;
+        }
+
+        const btn = document.getElementById("btnSubmitAtt");
+        btn.disabled = true;
+        btn.innerText = "جاري المزامنة مع السحابة...";
+
+        const record = {
+            employeeName: loggedInUser.name,
+            branch: loggedInUser.branch,
+            movementType: document.getElementById("attType").value,
+            photoPath: "Web_Direct_Camera_Verified",
+            latitude: Number(currentLat),
+            longitude: Number(currentLng),
+            mapsUrl: currentMapsUrl,
+            timestamp: { ".sv": "timestamp" }
+        };
+
+        try {
+            // أ. الحفظ في Firebase Realtime Database
+            const fbPromise = fetch(`${FIREBASE_DB_URL}/attendance_records.json`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(record)
+            });
+
+            // ب. المزامنة المتزامنة مع Google Sheets (بدون توقف في حال عدم توفر السيرفر)
+            const sheetsPayload = {
+                action: "recordAttendance",
+                employeeName: loggedInUser.name,
+                branch: loggedInUser.branch,
+                movementType: record.movementType,
+                photoBase64: stampedImageBase64,
+                latitude: currentLat,
+                longitude: currentLng,
+                mapsUrl: currentMapsUrl,
+                timestamp: new Date(serverTime).toISOString()
+            };
+
+            const sheetPromise = fetch(GOOGLE_SHEETS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(sheetsPayload)
+            }).catch(() => null);
+
+            await Promise.all([fbPromise, sheetPromise]);
+
+            showBanner("تم التسجيل بنجاح", `تم توثيق حركة ${record.movementType} في Firebase وشيت الإدارة`, true);
+
+            // تصفير الحقول
+            document.getElementById("attPhotoInput").value = "";
+            stampedImageBase64 = null;
+            document.getElementById("capturedImgTag").classList.add("hidden");
+            document.getElementById("previewPlaceholder").classList.remove("hidden");
+        } catch(e) {
+            showBanner("خطأ في المزامنة", "تعذر الإرسال، تحقق من جودة الإنترنت", false);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "تأكيد وتسجيل الحركة";
+        }
+    }
+
+    // تسجيل وحفظ النواقص
+    async function submitShortage() {
+        if(!loggedInUser) return;
+
+        const custName = document.getElementById("shCustomerName").value.trim();
+        const custPhoneRaw = document.getElementById("shCustomerPhone").value.trim();
+        const itemDetails = document.getElementById("shItemDetails").value.trim();
+
+        if(!custName || !itemDetails) {
+            showBanner("بيانات غير مكتملة", "يرجى كتابة اسم العميل وتفاصيل الصنف", false);
+            return;
+        }
+
+        const btn = document.getElementById("btnSubmitSh");
+        btn.disabled = true;
+        btn.innerText = "جاري الحفظ بالسحابة...";
+
+        let waPhone = custPhoneRaw.replace(/\D/g, "");
+        if(waPhone.startsWith("0")) waPhone = "2" + waPhone;
+        else if(!waPhone.startsWith("20")) waPhone = "20" + waPhone;
+
+        const order = {
+            branch: loggedInUser.branch,
+            employeeName: loggedInUser.name,
+            customerName: custName,
+            customerPhoneRaw: custPhoneRaw,
+            customerPhoneWhatsApp: waPhone,
+            category: document.getElementById("shCategory").value,
+            itemDetails: itemDetails,
+            urgency: document.getElementById("shUrgency").value,
+            depositAmount: Number(document.getElementById("shDeposit").value) || 0,
+            status: "قيد الانتظار",
+            timestamp: getTrueServerTime()
+        };
+
+        try {
+            // حفظ في Firebase
+            const fbPromise = fetch(`${FIREBASE_DB_URL}/shortage_orders.json`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(order)
+            });
+
+            // حفظ في Google Sheets
+            const sheetPromise = fetch(GOOGLE_SHEETS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "recordShortage", ...order })
+            }).catch(() => null);
+
+            await Promise.all([fbPromise, sheetPromise]);
+
+            showBanner("تم حفظ الطلب", `تم تسجيل الصنف في كشف النواقص بنجاح`, true);
+            document.getElementById("shCustomerName").value = "";
+            document.getElementById("shCustomerPhone").value = "";
+            document.getElementById("shItemDetails").value = "";
+            document.getElementById("shDeposit").value = "0";
+        } catch(e) {
+            showBanner("خطأ", "تعذر حفظ الطلب، تأكد من الإنترنت", false);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "حفظ في كشف النواقص السحابي";
+        }
+    }
+
+    // دوال لوحة تحكم الإدارة
+    async function loadAdminData() {
+        if (!loggedInUser || loggedInUser.role !== "ADMIN") return;
+        try {
+            const [attRes, shRes, alertsRes] = await Promise.all([
+                fetch(`${FIREBASE_DB_URL}/attendance_records.json`),
+                fetch(`${FIREBASE_DB_URL}/shortage_orders.json`),
+                fetch(`${FIREBASE_DB_URL}/security_alerts.json`)
+            ]);
+            
+            const attData = await attRes.json();
+            const shData = await shRes.json();
+            const alertsData = await alertsRes.json();
+
+            allAttendance = attData ? Object.keys(attData).map(k => ({...attData[k], key: k})).sort((a,b)=>b.timestamp-a.timestamp) : [];
+            allShortages = shData ? Object.keys(shData).map(k => ({...shData[k], key: k})).sort((a,b)=>b.timestamp-a.timestamp) : [];
+            allAlerts = alertsData ? Object.keys(alertsData).map(k => ({...alertsData[k], key: k})).sort((a,b)=>b.timestamp-a.timestamp) : [];
+
+            renderAdminLists();
+        } catch (e) {}
+    }
+
+    function renderAdminLists() {
+        const filter = document.getElementById("adminBranchFilter").value;
+        const fAtt = filter === "ALL" ? allAttendance : allAttendance.filter(x => x.branch === filter);
+        const fSh = filter === "ALL" ? allShortages : allShortages.filter(x => x.branch === filter);
+
+        document.getElementById("statAttCount").innerText = fAtt.length;
+        document.getElementById("statShCount").innerText = fSh.length;
+
+        // عرض الإنذارات
+        const alertsContainer = document.getElementById("securityAlertsContainer");
+        const alertsList = document.getElementById("adminSecurityAlertsList");
+        if (allAlerts.length > 0) {
+            alertsContainer.style.display = "block";
+            alertsList.innerHTML = allAlerts.slice(0, 5).map(a => `
+                <div class="record-item">
+                    <strong style="color:var(--danger)">👤 ${a.employeeName} (${a.branch})</strong>
+                    <p style="font-size:12px; margin-top:3px;">المخالفة: ${a.reason}</p>
+                    <p style="font-size:11px; color:var(--muted)">توقيت المحاولة الحقيقي: ${new Date(a.serverTime).toLocaleString("ar-EG")}</p>
+                </div>
+            `).join("");
+        } else {
+            alertsContainer.style.display = "none";
+        }
+
+        // عرض النواقص
+        document.getElementById("adminShortagesList").innerHTML = fSh.length ? fSh.map(i => `
+            <div class="record-item">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <strong>${i.itemDetails}</strong>
+                    <span class="badge ${i.urgency.includes('عاجل')?'urgent':''}">${i.urgency}</span>
+                </div>
+                <p style="font-size:12px; color:var(--muted); margin:4px 0;">👤 ${i.employeeName} | 📍 ${i.branch}</p>
+                <p style="font-size:12px;">📞 ${i.customerName} (${i.customerPhoneRaw}) | عربون: ${i.depositAmount} ج.م</p>
+                <div class="row-actions">
+                    <span class="badge done">${i.status}</span>
+                    <button class="small-btn" style="background:var(--primary);color:#fff;" onclick="cycleStatus('${i.key}', '${i.status}')">🔄 تغيير الحالة</button>
+                    ${i.customerPhoneWhatsApp ? `<a href="https://wa.me/${i.customerPhoneWhatsApp}" target="_blank" class="small-btn" style="background:#16a34a;color:#fff;">💬 واتساب</a>` : ''}
+                </div>
+            </div>
+        `).join("") : "<p style='font-size:13px; color:var(--muted);'>لا توجد طلبات نواقص مسجلة</p>";
+
+        // عرض الحضور
+        document.getElementById("adminAttendanceList").innerHTML = fAtt.length ? fAtt.map(i => `
+            <div class="record-item">
+                <div style="display:flex; justify-content:space-between;">
+                    <strong>👤 ${i.employeeName}</strong>
+                    <span class="badge">${i.movementType}</span>
+                </div>
+                <p style="font-size:12px; color:var(--muted); margin:4px 0;">📍 ${i.branch} | 🕒 ${new Date(i.timestamp).toLocaleString("ar-EG")}</p>
+                <div class="row-actions">
+                    ${i.mapsUrl ? `<a href="${i.mapsUrl}" target="_blank" class="small-btn" style="background:var(--accent);color:#fff;">📍 خرائط Google</a>` : ''}
+                </div>
+            </div>
+        `).join("") : "<p style='font-size:13px; color:var(--muted);'>لا توجد حركات حضور مسجلة</p>";
+    }
+
+    async function cycleStatus(key, currentStatus) {
+        const statuses = ["قيد الانتظار", "تم الطلب", "تم التوفير بالفرع", "تم التسليم للعميل"];
+        const next = statuses[(statuses.indexOf(currentStatus) + 1) % statuses.length];
+        await fetch(`${FIREBASE_DB_URL}/shortage_orders/${key}.json`, {
+            method: "PATCH", 
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({status: next})
+        });
+        loadAdminData();
+    }
+</script>
+</body>
+</html>
